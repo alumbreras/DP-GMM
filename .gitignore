@@ -1,0 +1,55 @@
+# Python pre-compiled
+###########################
+*.pyc
+
+# Temporal files
+###########################
+*~
+
+# Project files from IDEs
+###########################
+.pydevproject
+.spyderproject
+.spyderworkspace
+.project
+
+# Ipython notebook temporal files
+##########################
+.ipynb_checkpoints/
+
+# Outputs
+##########################
+*.trc
+*traces*
+*.eps
+*.png
+*.pck
+*.pk
+*.log
+*outputs/
+*nohup.out
+
+# Files to monitor parallel executions
+######################################
+*.workers*
+*monitor.txt
+.experiments.log
+
+# Others
+##########################
+*.metadata/
+src_cpp/
+datasets/
+*.data
+*.hf5
+*.h5
+*.hd
+*.RData
+*.Rhistory
+*.mp4
+*.exe
+*.lprof
+*.tar.gz
+
+
+
