@@ -4,8 +4,35 @@ library(MASS)
 #source('ars_alpha.r')
 #source('ars_beta.r')
 
-sample_z <-function(){
+sample_z <-function(A, mu_a0, R_a0){
+  #
+  # Chinese Restaurant Process with auxiliary tables (Neal's algorithm 8)
+  #
+  n <- dim(A)[2]
+  D <- dim(A)[1]
+  R_a0_inv <- solve(R_a0)
+  W_a0_inv <- solve(W_a0)
   
+  # Create m auxiliary tables from the base distribution
+  m <- 3
+  for(i in 1:m){
+    aux.tables.mean <- t(mvrnorm(m, mu_a0, R_a0_inv))
+    aux.tables.covariance <-  rWishart(m, max(beta_a0,D), W_a0_inv/beta_a0)
+  }
+  
+  # Compute likelihood for every table
+  # remove first the user assignment
+  # TODO: continue here
+  for(i in 1:K){
+    logp = np.log(self.n[i]-1)
+    logp += self.likelihood_a(u)
+    logprobs.append(logp) 
+  }
+  for(i in 1:m){
+    logp = np.log(self.n[i]-1)/m
+    logp += self.likelihood_a(u)
+    logprobs.append(logp) 
+  }
 }
 
 sample_alpha <- function(){

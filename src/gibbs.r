@@ -46,7 +46,7 @@ sample <- function(A, iters){
     
     # Sample assignments and concentration parameter
     #z <- sample_z()
-    #alpha <- sample_alpha() 
+    #alpha <- ars_sample_alpha(K = self.R, U = self.U)
     
     
   }
