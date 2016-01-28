@@ -1,11 +1,13 @@
 # Main file
 # Control the calls to the conditional samplers and store the traces
+# a matlab implementation: 
+# https://github.com/mim/igmm/blob/master/igmm_mv.m
 library(abind)
 library(coda)
 library(mixtools)
 source('conditionals.r')
 set.seed(3)
-
+PLOTS <- TRUE
 data(iris)
 data(geyser)
 
@@ -13,11 +15,10 @@ data(geyser)
 
 #sample <- function(A, iters){
 #   
-  iters <- 100
+  iters <- 1000
   A <- t(iris[,1:4])
-  A <- t(geyser)
+  #A <- t(geyser)
   
-  #A <-iris[,3, drop=FALSE]
   D <- dim(A)[1]
   N <- dim(A)[2]
   
@@ -58,11 +59,13 @@ data(geyser)
       S_ar[,,k] <- sample_S_ar(A[,mask, drop=FALSE], mu_ar[,k, drop=FALSE], beta_a0, W_a0)
       mu_ar[,k] <- sample_mu_ar(A[,mask, drop=FALSE], S_ar[,,k], mu_a0, R_a0)
     }
-    par(mfrow=c(1,2))
-    plot(t(A), col=palette()[z+1], main=paste("Updated components"))
-    for(k in 1:K){
-      ellipse(mu=mu_a0, sigma=W_a0, alpha = .5, lwd=5, npoints = 250, col="black")
-      ellipse(mu=mu_ar[,k], sigma=solve(S_ar[,,k]),  alpha = .5, lwd=3, npoints = 250, col=palette()[k+1])
+    if(PLOTS){
+      par(mfrow=c(1,2))
+      plot(t(A[c(1,2),]), col=palette()[z+1], main=paste("Updated components"))
+      for(k in 1:K){
+        ellipse(mu=mu_a0[c(1,2)], sigma=W_a0[c(1,2),c(1,2)], alpha = .5, lwd=5, npoints = 250, col="black")
+        ellipse(mu=mu_ar[c(1,2),k], sigma=solve(S_ar[c(1,2),c(1,2),k]),  alpha = .5, lwd=3, npoints = 250, col=palette()[k+1])
+      }
     }
     
     # Sample hyperpriors
@@ -81,15 +84,15 @@ data(geyser)
     K <- length(unique(z))
     cat('\n', table(z))
     #alpha <- ars_sample_alpha(K = self.R, U = self.U)
-    print(mu_ar[,1:K])
     traces[i,] <- c(length(unique(z)), mean(mu_a0), det(R_a0), det(W_a0))
     traces.z[i,] <- z
-  }
+
+   }
 #  return(list(traces=traces,
 #              traces.z=traces.z))
 #}
 
 #traces <- res$traces
 #traces.z <- res$traces.z
-#chains <- mcmc(traces)
-#plot(chains)
+chains <- mcmc(traces)
+plot(chains)

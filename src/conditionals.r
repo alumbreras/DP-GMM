@@ -35,30 +35,27 @@ sample_z <- function(u, A, alpha, z, mu_ar, S_ar, mu_a0, R_a0, beta_a0, W_a0){
     
     # normalize probabilities to avoid numerical underflow
     probs <- logprobs-max(logprobs)
-    #cat("\nlogprobs:", probs)
     probs <- exp(probs)
     probs <- probs/sum(probs)
-    #cat("\nprobs:", probs)
     
     # Choose table
     chosen <- base::sample(1:(K+m), 1, prob=probs)
     
-    # Debug:
-    # draw choices and final choice
+    # Draw choices and probabilities
     if(DEBUG){
       par(mfrow=c(1,1))
       size <- rep(1, dim(A)[2])
       pch <- rep(1, dim(A)[2])
       size[u] <- 5
       pch[u] <- 19
-      plot(t(A), col=palette()[z+1],  cex=size, pch=pch, main=paste("Choosing...", u))
-      ellipse(mu=mu_a0, sigma=W_a0, alpha = .5, lwd=5, npoints = 250, col="black")
+      plot(t(A[c(1,2),]), col=palette()[z+1],  cex=size, pch=pch, main=paste("Choosing...", u))
+      ellipse(mu=mu_a0[c(1,2)], sigma=W_a0[c(1,2),c(1,2)], alpha = .5, lwd=5, npoints = 250, col="black")
       for(k in 1:K){
-        ellipse(mu=mu_ar[,k], sigma=solve(S_ar[,,k]), alpha=0.5, lwd=3, npoints = 250, col=palette()[k+1])
+        ellipse(mu=mu_ar[c(1,2),k], sigma=solve(S_ar[c(1,2),c(1,2),k]), alpha=0.5, lwd=3, npoints = 250, col=palette()[k+1])
         text(mu_ar[1,k],mu_ar[2,k], probs[k])
       }
       for(k in 1:m){
-        ellipse(mu=aux.tables.mean[,k], sigma=aux.tables.covariance[,,k], alpha=0.5, lwd=3, lty=2, npoints = 250, col=palette()[k+1])
+        ellipse(mu=aux.tables.mean[c(1,2),k], sigma=aux.tables.covariance[c(1,2),c(1,2),k], alpha=0.5, lwd=3, lty=2, npoints = 250, col=palette()[k+1])
         text(aux.tables.mean[1,k],aux.tables.mean[2,k], probs[K+m])
       }
       readline(paste(u, "...", chosen))
@@ -72,29 +69,6 @@ sample_z <- function(u, A, alpha, z, mu_ar, S_ar, mu_a0, R_a0, beta_a0, W_a0){
       mu_ar[,K+1] <- aux.tables.mean[, chosen - K]
       S_ar[,,K+1] <- solve(aux.tables.covariance[,, chosen - K])
       z[u] <- K+1
-      
-      if(DEBUG){
-        # debugu: current
-        par(mfrow=c(1,2))
-        plot(t(A), col=palette()[z+1], main=paste("Before"))
-        for(k in 1:K){
-          ellipse(mu=mu_a0, sigma=W_a0, alpha = .5, lwd=5, npoints = 250, col="black")
-          ellipse(mu=mu_ar[,k], sigma=solve(S_ar[,,k]), alpha=0.5, lwd=3, npoints = 250, col=palette()[k+1])
-        }
-        
-        #debug: new table!!
-        size <- rep(1, dim(A)[2])
-        pch <- rep(1, dim(A)[2])
-        size[u] <- 5
-        pch[u] <- 19
-        plot(t(A), col=palette()[z], cex=size, pch=pch, main="After (new table!)")
-        for(k in 1:K){
-          ellipse(mu=mu_a0, sigma=W_a0, alpha = .5, lwd=5, npoints = 250, col="black")
-          ellipse(mu=mu_ar[,k], sigma=solve(S_ar[,,k]), alpha = .5, lwd=3, npoints = 250, col=palette()[k+1])
-        }
-        # new table
-        ellipse(mu=mu_ar[,K+1], sigma=solve(S_ar[,,K+1]), npoints = 250, lwd=3, lty=2, col=palette())[K+1+1]  
-      }
     }
     else{
       z[u] <- chosen
