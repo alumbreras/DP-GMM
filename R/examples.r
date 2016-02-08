@@ -24,4 +24,5 @@ run.example <- function(dataset=c('iris', 'geyser')){
   plot(chains)
 }
 
-run.example(dataset='iris')
+set.seed(2)
+run.example(dataset='geyser')

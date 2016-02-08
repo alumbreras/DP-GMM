@@ -20,7 +20,7 @@ sample_z <- function(u, A, alpha, z, mu_ar, S_ar, mu_a0, R_a0, beta_a0, W_a0){
   logprobs <- rep(NA, K+m)
   for(k in 1:K){
     logp <- log(n[k]-as.numeric(z[u]==k))
-    logp <- logp + mvtnorm::dmvnorm(A[,u], mean=mu_ar[,k,drop=FALSE], sigma=solve(S_ar[,,k]), log=TRUE)
+    logp <- logp + mvtnorm::dmvnorm(A[,u], mean=mu_ar[,k,drop=FALSE], sigma=ginv(S_ar[,,k]), log=TRUE)
     logprobs[k] <- logp 
   }
     
@@ -130,7 +130,8 @@ sample_S_ar <- function(A_r, mu_ar_k, beta_a0, W_a0){
   }
   
   wishart_dof_post <- beta_a0 + n
-  wishart_S_post <- solve(beta_a0*W_a0 + scatter_matrix)
+  #wishart_S_post <- solve(beta_a0*W_a0 + scatter_matrix)
+  wishart_S_post <- ginv(beta_a0*W_a0 + scatter_matrix)
   return(rWishart(1, wishart_dof_post, wishart_S_post)[,,1])
 }       
 
