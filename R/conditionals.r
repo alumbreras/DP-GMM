@@ -1,15 +1,13 @@
-# Sampling functions
-#
+##########################################################
+# Functions to sample from the conditional distributions
+##########################################################
 library(MASS)
 library(mvtnorm)
 source('ars_alpha.r')
 source('ars_beta.r')
 
-DEBUG <- FALSE
+# Chinese Restaurant Process with auxiliary tables (Neal's algorithm 8)
 sample_z <- function(u, A, alpha, z, mu_ar, S_ar, mu_a0, R_a0, beta_a0, W_a0){
-  #
-  # Chinese Restaurant Process with auxiliary tables (Neal's algorithm 8)
-  # 
   m <- 3 # number of auxiliary tables to approximate the infinite number of empty tables
   
   n <- tabulate(z)
@@ -90,12 +88,8 @@ sample_z <- function(u, A, alpha, z, mu_ar, S_ar, mu_a0, R_a0, beta_a0, W_a0){
 ########################################################
 # Component parameters
 ########################################################
-
+# Cluster mean
 sample_mu_ar <- function(A_r, S_ar, mu_a0, R_a0){
-  # 
-  # Samples a mean for cluster r 
-  # from its conditional probability
-  # 
   n <- dim(A_r)[2]
   
   # If nobody in the cluster sample from prior
@@ -110,6 +104,7 @@ sample_mu_ar <- function(A_r, S_ar, mu_a0, R_a0){
   return(mvrnorm(1, mu_post, Sigma_post))
 }
 
+# Cluster precision
 sample_S_ar <- function(A_r, mu_ar_k, beta_a0, W_a0){
   #
   # Sample attributes covariance matrix of cluster r
@@ -144,8 +139,7 @@ sample_S_ar <- function(A_r, mu_ar_k, beta_a0, W_a0){
 # Hyperparameters
 ########################################################
 
-# Cluster means 
-#################
+# Hyper-mean of cluster means
 sample_mu_a0 <- function(Lambda_a, mu_a, mu_ar, R_a0){
   #
   # Samples mean of gaussian hyperprior placed over clusters centroids
@@ -158,6 +152,7 @@ sample_mu_a0 <- function(Lambda_a, mu_a, mu_ar, R_a0){
   return(mvrnorm(1, mu_post, Sigma_post)) 
 }
 
+# Hyper-precision of cluster means
 sample_R_a0 <-function(Sigma_a, mu_ar, mu_a0){
   #
   # Samples precision of gaussian hyperprior placed over clusters centroids
@@ -174,8 +169,7 @@ sample_R_a0 <-function(Sigma_a, mu_ar, mu_a0){
   return(as.matrix(rWishart(1, wishart_dof_post, wishart_S_post)[,,1]))
 }
 
-# Cluster covariances
-#####################
+# Hyper-scale of cluster covariances
 sample_W_a0 <- function(Lambda_a, S_ar, beta_a0){
   #
   # Sample base covariance of attributes (hyperparameter)
@@ -193,7 +187,7 @@ sample_W_a0 <- function(Lambda_a, S_ar, beta_a0){
   return(as.matrix(rWishart(1, wishart_dof_post, wishart_S_post)[,,1]))
 }
 
-
+# Hyper-dof of cluster covariances
 sample_beta_a0 <- function(S, W, init=4){
   # Sample the degrees of freedom of the Wishart
   # given a scale matrix W and some observed precision matrices S

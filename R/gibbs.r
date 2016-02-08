@@ -93,27 +93,3 @@ gibbs <- function(A, z_init, iters=100, plots=TRUE, plots.freq=10){
   
   return(res)
 }
-
-##############################################################
-##############################################################
-if(TRUE){
-  data(iris)
-  data(geyser)
-  
-  # Iris dataset
-  A <- t(iris[,1:4])
-  z_init <- sample(10, dim(A)[2], replace=TRUE) # random initialization
-  #z_init <- rep(1, dim(A)[2]) # uniform initialization
-  
-  # Geyser dataset
-  A <- t(geyser)
-  z_init <- sample(2, dim(A)[2], replace=TRUE) # random initialization
-  
-  # Run 
-  res <- gibbs(A, z_init=z_init, iters=1000)
-  
-  # plot traces
-  traces <- res$traces
-  chains <- mcmc(traces)
-  plot(chains)
-}
